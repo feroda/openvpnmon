@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"> 
+
+{% load i18n %}
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="it" dir="ltr">
+<head>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+	<meta http-equiv="Content-Language" content="it" />
+	<meta name="robots" content="NONE,NOARCHIVE" />
+	
+	<title>{% trans "OpenVPNmon download certificate" %}</title>
+    <style type="text/css">
+    ul { line-height: 2em; }
+    </style>
+</head> 
+
+<body>
+<h1>{% trans "How to get access to the network" %}</h1>
+<h2>{% trans "WARNING" %}: {% trans "This page will not be available after you have downloaded certificate and configuration files" %} </h2>
+
+{% blocktrans %}
+<ul>
+<li class="level1"><div class="li"> Scaricare il programma OpenVPN </div>
+<ul>
+<li class="level2"><div class="li"> Versione per <strong>Windows</strong> <a rel="nofollow" title="http://swupdate.openvpn.net/community/releases/openvpn-2.2.0-install.exe" class="urlextern" href="http://swupdate.openvpn.net/community/releases/openvpn-2.2.0-install.exe">http://swupdate.openvpn.net/community/releases/openvpn-2.2.0-install.exe</a></div>
+</li>
+<li class="level2"><div class="li"> La versione per <strong>GNU/Linux</strong> è di solito comodamente scaricabile con il gestore delle installazioni (ad esempio: <code>Ubuntu Software Center</code>)</div>
+</li>
+<li class="level2"><div class="li"> Altrimenti è possibile installare manualmente la versione per <strong>GNU/Linux</strong> dall'indirizzo <a rel="nofollow" title="http://swupdate.openvpn.net/community/releases/openvpn-2.2.0.tar.gz" class="urlextern" href="http://swupdate.openvpn.net/community/releases/openvpn-2.2.0.tar.gz">http://swupdate.openvpn.net/community/releases/openvpn-2.2.0.tar.gz</a></div>
+</li>
+</ul>
+</li>
+<li class="level1"><div class="li"> Eseguire come amministratore il file scaricato per installare il programma OpenVPN</div>
+</li>
+{% endblocktrans %}
+<li class="level1"><div class="li"> <a href="{{ CERTS_PUBLIC_DOWNLOAD_URL_BASE }}{% url base.views.cert_download token=client.cert_distribution_token,client_id=client.id %}">{% trans "Download certificate and configuration files" %}</a></li>
+{% blocktrans %}
+<li class="level1"><div class="li"> Estrarre <strong>i file di configurazione</strong> nella cartella di configurazione di OpenVPN</div>
+<ul>
+<li class="level2"><div class="li"> In <strong>Windows</strong> di default si trova in <code>C:\Program Files\OpenVPN\config</code></div>
+</li>
+<li class="level2"><div class="li"> In <strong>GNU/Linux</strong> (Ubuntu, Debian) si trova in <code>/etc/openvpn/</code></div>
+</li>
+</ul>
+</li>
+<li class="level1"><div class="li"> Avviare il servizio OpenVPN:</div>
+<ul>
+<li class="level2"><div class="li"> In <strong>Windows</strong> fare doppio click sull'icona OpenVPN (da verificare)</div>
+</li>
+<li class="level2"><div class="li"> In <strong>GNU/Linux</strong> (Ubuntu, Debian) avviare il servizio con <code>service openvpn start</code></div>
+</li>
+</ul>
+</li>
+<li class="level1"><div class="li"> Avviare un browser e accedere all'indirizzo <a rel="nofollow" title="{{ VPN_HOME_PAGE }}" class="urlextern" href="{{ VPN_HOME_PAGE }}">{{ VPN_HOME_PAGE }}</a></div>
+</li>
+</ul>
+{% endblocktrans %}
+
+</body>
+</html>
+

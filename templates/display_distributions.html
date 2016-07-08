@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"> 
+
+{% load i18n %}
+{% spaceless %}
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="it" dir="ltr">
+<head>
+	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+	<meta http-equiv="Content-Language" content="it" />
+	<meta name="robots" content="NONE,NOARCHIVE" />
+	
+	<title>{% trans "OpenVPNmon certificates distribution" %}</title>
+</head> 
+
+<body>
+<a href="{% url admin:base_client_changelist %}">{% trans "Go back to OpenVPNmon admin interface" %}</a>
+<h2>{% trans "Distributed certificates" %}</h2>
+{% for client in objs %}
+    <p><div style="font-size:x-large; display:inline;">{{ client }}</div>
+     <div style="display:inline;"> (
+    {% if client.email %}
+         {# href="mailto:{{client.email}}?Subject={% trans "VPNConfiguration" %}&body={% trans "You can download your configuration at the following url: %}\n" %}{% url base.views.pre_cert_download token=client.cert_distribution_token,client_id=client.id %}"> #} 
+        {{ client.email }}
+    {% else %}
+         {% trans "email address not set" %}
+    {% endif %}
+    )</div>
+    </p>
+    <ul>
+        <li>token: {{ client.cert_distribution_token }}</li>
+        <li>url: <a href="{{ CERTS_PUBLIC_DOWNLOAD_URL_BASE }}{% url base.views.pre_cert_download token=client.cert_distribution_token,client_id=client.id %}">{% url base.views.pre_cert_download token=client.cert_distribution_token,client_id=client.id %}</a></li>
+    </ul>
+    </p>
+{% endfor %}
+</body>
+</html>
+{% endspaceless %}
+

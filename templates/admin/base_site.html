@@ -1,0 +1,15 @@
+{% extends "admin/base.html" %}
+{% load basic_tags %}
+
+{% block extrahead %}
+    <link rel="stylesheet" type="text/css" href="{% static_url %}/admin/css/adminstyle.css" />
+{% endblock %}
+
+{% block title %}{{ title|escape }} OpenVPN Config {% endblock %}
+
+
+{% block branding %}
+<h1 id="site-name">OpenVPN Config</h1>
+{% endblock %}
+
+{% block nav-global %}{% endblock %}
