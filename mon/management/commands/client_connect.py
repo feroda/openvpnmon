@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand, CommandError
-from openvpnmon.base.models import Client
-from openvpnmon.mon.models import OpenVPNLog
+from base.models import Client
+from mon.models import OpenVPNLog
 
 from django.conf import settings
 from exceptions import CommandLogError

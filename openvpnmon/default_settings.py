@@ -1,8 +1,6 @@
 # Django settings for openvpnmon project.
 import os
 
-DEBUG = True
-TEMPLATE_DEBUG = DEBUG
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -30,15 +28,6 @@ DATABASES = {
 }
 
 
-TEMPLATE_CONTEXT_PROCESSORS = (
-    'django.contrib.auth.context_processors.auth',
-    'django.core.context_processors.debug',
-    'django.core.context_processors.i18n',
-    'django.core.context_processors.media',
-    #    'django.core.context_processors.request',
-    'django.contrib.messages.context_processors.messages',
-    'openvpnmon.context_processors.my_settings', )
-
 MIDDLEWARE_CLASSES = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -61,15 +50,21 @@ INSTALLED_APPS = [
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR + "/admin/templates",
+                 BASE_DIR + "/templates",],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
                 'django.template.context_processors.debug',
-                'django.template.context_processors.request',
+                # 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.i18n',
+                'django.template.context_processors.media',
+                'django.contrib.messages.context_processors.messages',
+                'openvpnmon.context_processors.my_settings',
             ],
+            'debug': True,
         },
     },
 ]
@@ -111,9 +106,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
 STATIC_URL = '/static/'
-
-TEMPLATE_DIRS = (BASE_DIR + "/admin/templates",
-                 BASE_DIR + "/templates", )
 
 # Logging facility
 LOG_FILE = os.path.join(BASE_DIR, 'openvpnmon.log')
