@@ -190,18 +190,17 @@ class Client(models.Model):
                         e.shell_cmd, e.returncode, e.output)
                     client_log = ClientActionsLog(
                         action=ACTION_ERROR_CERT_CREATE,
-                        note=error_log)
-                    self.clientactionslog_set.add(client_log)
+                        note=error_log, client=self)
+                    client_log.save()
                     raise CertCreationError(e.output)
 
-                basename = settings.EASY_RSA_KEYS_DIR + self.common_name
                 self.bind_cert()
 
             self.cert_distribution_token = None
             self.cert_distribution_on = None
             self.revocation_on = None
-            client_log = ClientActionsLog(action=ACTION_CERT_CREATED)
-            self.clientactionslog_set.add(client_log)
+            client_log = ClientActionsLog(action=ACTION_CERT_CREATED, client=self)
+            client_log.save()
             self.save()
         else:
             raise PermissionDenied(
@@ -220,17 +219,17 @@ class Client(models.Model):
         self.cert_distribution_on = datetime.datetime.now()
         self.save()
         self.cert_distribution_token = self.token_generator.make_token(self)
-        client_log = ClientActionsLog(action=ACTION_CERT_DISTRIBUTED)
-        self.clientactionslog_set.add(client_log)
+        client_log = ClientActionsLog(action=ACTION_CERT_DISTRIBUTED, client=self)
+        client_log.save()
         self.save()
 
     def check_token(self, token, remote_ip):
         rv = self.token_generator.check_token(self, token)
         client_log = ClientActionsLog(
             action=ACTION_CERT_DISTRIBUTION_TOKEN_CHECKED,
-            remote_ip=remote_ip,
+            remote_ip=remote_ip, client=self,
             note="result %s" % rv)
-        self.clientactionslog_set.add(client_log)
+        client_log.save()
         return rv
 
     def revoke_cert(self):
@@ -247,10 +246,10 @@ class Client(models.Model):
         # Update revocation timestamp
         self.revocation_on = datetime.datetime.now()
         self.enabled = False
-        client_log = ClientActionsLog(action=ACTION_CERT_REVOKED,
+        client_log = ClientActionsLog(action=ACTION_CERT_REVOKED, client=self,
                                       note="== OUTPUT == %s\n== ERROR == %s" %
                                       (stdout, stderr))
-        self.clientactionslog_set.add(client_log)
+        client_log.save()
         self.save()
 
     def clean_ip(self):

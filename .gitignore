@@ -2,3 +2,4 @@ settings.py
 *.pyc
 *.sqlite3
 *.log
+extras/easy-rsa/keys/*
