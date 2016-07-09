@@ -176,18 +176,18 @@ URL_PREFIX = ""
 
 HARDENING = True
 
-CA_CERT = "/absolute/path/to/ca/cert"
-CA_KEY = "/absolute/path/to/ca/key"
-EASY_RSA_DIR = BASE_DIR + "/extras/easy-rsa/"
-EASY_RSA_KEYS_DIR = EASY_RSA_DIR + "keys/"
+EASY_RSA_DIR = os.path.join(BASE_DIR, "extras", "easy-rsa")
+EASY_RSA_KEYS_DIR = os.path.join(EASY_RSA_DIR, "keys")
+CA_CERT = os.path.join(EASY_RSA_KEYS_DIR, 'ca.crt')
+CA_KEY = os.path.join(EASY_RSA_KEYS_DIR, 'ca.key')
 CERTS_PUBLIC_DOWNLOAD_URL_BASE = "https://localhost"
 VPN_HOME_PAGE = "http://wwwvpnserver"
 HOOK_CLIENT_MANAGE = BASE_DIR + "/extras/client-manage.sh"
 
 # Name for downloaded cert archive file and files within it
 DOWNLOAD_CERT_ARCHIVE_BASENAME = "certs"
-DOWNLOAD_CERT_CLIENT_BASENAME = "cert"
-DOWNLOAD_KEY_CLIENT_BASENAME = "private"
+DOWNLOAD_CERT_CLIENT_BASENAME = "vpnclient"
+DOWNLOAD_KEY_CLIENT_BASENAME = "vpnclient"
 DOWNLOAD_CERT_CA_BASENAME = "ca"
 DOWNLOAD_OPENVPNCONF_BASENAME_GNU = DOWNLOAD_OPENVPNCONF_BASENAME_WIN = "subnet"
 

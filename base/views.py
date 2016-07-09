@@ -1,3 +1,6 @@
+import datetime
+import socket
+
 from django.http import HttpResponseBadRequest, HttpResponse, Http404
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.admin.views.decorators import staff_member_required
@@ -8,8 +11,6 @@ from django.conf import settings
 
 from base.models import Client, ACTION_CERT_DOWNLOADED, ClientActionsLog
 from base.utils import zipfile_info, get_certs_zip_content_and_notes
-
-import datetime, socket
 
 
 @staff_member_required
@@ -68,14 +69,15 @@ def pre_cert_download(request, client_id, token):
 def _prepare_zip_certs_response(request, client):
 
     zipcontent, zipnotes = get_certs_zip_content_and_notes(client)
-    mimetype = 'application/zip'
-    response = HttpResponse(zipcontent, mimetype=mimetype)
+    content_type = 'application/zip'
+    response = HttpResponse(zipcontent, content_type=content_type)
     response[
         'Content-Disposition'] = 'attachment; filename=%s.zip' % settings.DOWNLOAD_CERT_ARCHIVE_BASENAME
-    log = ClientActionsLog(action=ACTION_CERT_DOWNLOADED,
-                           remote_ip=request.META['REMOTE_ADDR'],
-                           note=zipnotes)
-    client.clientactionslog_set.add(log)
+    client_log = ClientActionsLog(action=ACTION_CERT_DOWNLOADED,
+                                  remote_ip=request.META['REMOTE_ADDR'],
+                                  note=zipnotes,
+                                  client=client)
+    client_log.save()
     return response
 
 
@@ -141,9 +143,9 @@ def tcp_connect(request, client_id):
     dns_resolution = tcp_connection_up = None
     try:
         rv_addrinfo = socket.getaddrinfo(hostname, port, 2, 0, socket.SOL_TCP)
-    except socket.gaierror, e:
+    except socket.gaierror as e:
         dns_up = {'check': False, 'descr': unicode(e.strerror)}
-    except socket.timeout, t:
+    except socket.timeout as t:
         dns_up = {'check': False, 'descr': unicode(t)}
     else:
         dns_up = {'check': True}
