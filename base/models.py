@@ -1,8 +1,10 @@
-import subprocess, os, datetime, logging
+import subprocess
+import os
+import datetime
+import logging
 
 from django.db import models
-from django.utils.translation import ugettext, ugettext_lazy as _
-from django.db.models import Q
+from django.utils.translation import ugettext_lazy as _
 from django.template.defaultfilters import slugify
 from django.conf import settings
 from django.core.exceptions import PermissionDenied, ValidationError
@@ -12,8 +14,6 @@ import tokens
 
 from openvpnmon.utils import call_shell, CalledShellCommandError
 from openvpnmon.exceptions import CertNotFound, CertCreationError
-
-
 
 ACTION_CLIENT_ENABLED = "CLIENT ENABLED"
 ACTION_CLIENT_AUTHORIZATION_UPDATE = "CLIENT AUTHORIZATION UPDATE"
@@ -113,8 +113,9 @@ class Client(models.Model):
 
     cert_validity_start = models.DateTimeField(blank=True, null=True)
     cert_validity_end = models.DateTimeField(blank=True, null=True)
-    cert_distribution_token = models.CharField(
-        max_length=128, blank=True, null=True)
+    cert_distribution_token = models.CharField(max_length=128,
+                                               blank=True,
+                                               null=True)
     cert_distribution_on = models.DateTimeField(blank=True, null=True)
     cert_download_on = models.DateTimeField(blank=True, null=True)
     cert_public_download_on = models.DateTimeField(blank=True, null=True)
@@ -139,7 +140,6 @@ class Client(models.Model):
         return basename + ".crt"
 
     def exist_cert(self):
-        basename = settings.EASY_RSA_KEYS_DIR + self.common_name
         if os.path.exists(self.get_cert_filename()):
             return True
         return False
@@ -151,7 +151,7 @@ class Client(models.Model):
                             "r").read()
         except IOError as e:
             if e.errno == 2:
-                raise CertNotFound( _("Certificate for %(obj)s" + \
+                raise CertNotFound(_("Certificate for %(obj)s" + \
                     " has not been found [file %(filename)s]." + \
                     " Please check your `easy-rsa` configuration in %(easy_rsa_dir)s") % {
                         'obj' : self,
@@ -190,7 +190,8 @@ class Client(models.Model):
                         e.shell_cmd, e.returncode, e.output)
                     client_log = ClientActionsLog(
                         action=ACTION_ERROR_CERT_CREATE,
-                        note=error_log, client=self)
+                        note=error_log,
+                        client=self)
                     client_log.save()
                     raise CertCreationError(e.output)
 
@@ -199,7 +200,8 @@ class Client(models.Model):
             self.cert_distribution_token = None
             self.cert_distribution_on = None
             self.revocation_on = None
-            client_log = ClientActionsLog(action=ACTION_CERT_CREATED, client=self)
+            client_log = ClientActionsLog(action=ACTION_CERT_CREATED,
+                                          client=self)
             client_log.save()
             self.save()
         else:
@@ -219,7 +221,8 @@ class Client(models.Model):
         self.cert_distribution_on = datetime.datetime.now()
         self.save()
         self.cert_distribution_token = self.token_generator.make_token(self)
-        client_log = ClientActionsLog(action=ACTION_CERT_DISTRIBUTED, client=self)
+        client_log = ClientActionsLog(action=ACTION_CERT_DISTRIBUTED,
+                                      client=self)
         client_log.save()
         self.save()
 
@@ -227,7 +230,8 @@ class Client(models.Model):
         rv = self.token_generator.check_token(self, token)
         client_log = ClientActionsLog(
             action=ACTION_CERT_DISTRIBUTION_TOKEN_CHECKED,
-            remote_ip=remote_ip, client=self,
+            remote_ip=remote_ip,
+            client=self,
             note="result %s" % rv)
         client_log.save()
         return rv
@@ -246,7 +250,8 @@ class Client(models.Model):
         # Update revocation timestamp
         self.revocation_on = datetime.datetime.now()
         self.enabled = False
-        client_log = ClientActionsLog(action=ACTION_CERT_REVOKED, client=self,
+        client_log = ClientActionsLog(action=ACTION_CERT_REVOKED,
+                                      client=self,
                                       note="== OUTPUT == %s\n== ERROR == %s" %
                                       (stdout, stderr))
         client_log.save()
