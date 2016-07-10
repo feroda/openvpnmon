@@ -8,6 +8,7 @@ from django.core.exceptions import PermissionDenied
 
 from openvpnmon.base.models import Client
 
+
 class OpenVPNLog(models.Model):
 
     common_name = models.CharField(max_length=128)
@@ -16,8 +17,8 @@ class OpenVPNLog(models.Model):
     vpn_iface = models.CharField(_('VPN iface'), max_length=8, db_index=True)
     when_connect = models.DateTimeField()
     when_disconnect = models.DateTimeField(null=True)
-    bytes_sent = models.PositiveIntegerField(null=True,default=None)
-    bytes_received = models.PositiveIntegerField(null=True,default=None)
+    bytes_sent = models.PositiveIntegerField(null=True, default=None)
+    bytes_received = models.PositiveIntegerField(null=True, default=None)
 
     class Meta:
         ordering = ["-when_connect"]
@@ -26,6 +27,5 @@ class OpenVPNLog(models.Model):
 
     def __unicode__(self):
         return "%s from %s assigned IP %s connected on %s, disconnected on %s" % (
-            self.common_name, self.public_ip, self.vpn_ip, self.when_connect, self.when_disconnect
-        )
-
+            self.common_name, self.public_ip, self.vpn_ip, self.when_connect,
+            self.when_disconnect)

@@ -1,8 +1,8 @@
-
 from django.db.backends.signals import connection_created
 from django.conf import settings
 
 from pprint import pprint
+
 
 def use_schema(sender, **kwargs):
 
@@ -14,5 +14,6 @@ def use_schema(sender, **kwargs):
         if db_schema:
             cursor = connection.cursor()
             cursor.execute("SET search_path TO \"%s\";" % db_schema)
-        
+
+
 connection_created.connect(use_schema)

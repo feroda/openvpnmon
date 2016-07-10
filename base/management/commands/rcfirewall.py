@@ -15,14 +15,13 @@ class Command(BaseCommand):
     help = 'Set firewall rules'
 
     def handle(self, *args, **options):
-        
+
         log.info("Setting firewall rules...")
         qs = Client.objects.filter(enabled=True)
 
         for client in qs:
-        
+
             cmd = client_auth.Command()
             cmd.handle(client.common_name)
 
         return 0
-

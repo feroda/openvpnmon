@@ -32,39 +32,73 @@ ACTIONS_ERROR_LIST = [
     (ACTION_ERROR, ACTION_ERROR),
 ]
 
-ACTIONS_LIST= [
+ACTIONS_LIST = [
     (ACTION_CLIENT_ENABLED, ACTION_CLIENT_ENABLED),
     (ACTION_CLIENT_AUTHORIZATION_UPDATE, ACTION_CLIENT_AUTHORIZATION_UPDATE),
     (ACTION_CERT_CREATED, ACTION_CERT_CREATED),
     (ACTION_CERT_DISTRIBUTED, ACTION_CERT_DISTRIBUTED),
-    (ACTION_CERT_DISTRIBUTION_TOKEN_CHECKED, ACTION_CERT_DISTRIBUTION_TOKEN_CHECKED),
+    (ACTION_CERT_DISTRIBUTION_TOKEN_CHECKED,
+     ACTION_CERT_DISTRIBUTION_TOKEN_CHECKED),
     (ACTION_CERT_REVOKED, ACTION_CERT_REVOKED),
     (ACTION_CERT_DOWNLOADED, ACTION_CERT_DOWNLOADED),
 ] + ACTIONS_ERROR_LIST
 
-ROLE_CHOICES = (('customer', _('customer')), ('acs',_('ACS chamber')), (('acsadmin'),_('ACS admin')), ('acspartner',_('service station')))
+ROLE_CHOICES = (('customer', _('customer')), ('acs', _('ACS chamber')), (
+    ('acsadmin'), _('ACS admin')), ('acspartner', _('service station')))
 OS_CHOICES = (('win', _('Windows')), ('gnu', _('GNU/Linux')))
 
 if not os.path.exists(settings.EASY_RSA_DIR):
-    raise OSError("%s not found. Please check EASY_RSA_DIR value in settings.py" % settings.EASY_RSA_DIR)
+    raise OSError(
+        "%s not found. Please check EASY_RSA_DIR value in settings.py" %
+        settings.EASY_RSA_DIR)
 if not os.path.isdir(settings.EASY_RSA_DIR):
-    raise OSError("%s is not a directory. Please check EASY_RSA_DIR value in settings.py" % settings.EASY_RSA_DIR)
+    raise OSError(
+        "%s is not a directory. Please check EASY_RSA_DIR value in settings.py"
+        % settings.EASY_RSA_DIR)
 
-PKITOOL = 'cd %s; . %s; ./pkitool %s' % (settings.EASY_RSA_DIR, settings.EASY_RSA_VARS_FILE, "%s")
-REVOKEFULL = 'cd %s; . %s; ./revoke-full %s' % (settings.EASY_RSA_DIR, settings.EASY_RSA_VARS_FILE, "%s")
+PKITOOL = 'cd %s; . %s; ./pkitool %s' % (settings.EASY_RSA_DIR,
+                                         settings.EASY_RSA_VARS_FILE, "%s")
+REVOKEFULL = 'cd %s; . %s; ./revoke-full %s' % (
+    settings.EASY_RSA_DIR, settings.EASY_RSA_VARS_FILE, "%s")
 
 log = logging.getLogger(__name__)
 
+
 class Client(models.Model):
 
-    common_name = models.SlugField(_('cert name'), max_length=256, unique=True, blank=True, help_text=_("Leave blank if you want to let the software assign a common name suitable for your subnet"))
-    ip = models.IPAddressField(_('IP address'), blank=True, help_text=_("Leave blank if you want to let the software assign the first available for your network."))
-    company = models.CharField(_('company'), max_length=256, blank=True, null=True)
-    name = models.CharField(_('name'), max_length=128, help_text=_("It should be Name Surname, or hostname. It has to be unique in company"))
+    common_name = models.SlugField(
+        _('cert name'),
+        max_length=256,
+        unique=True,
+        blank=True,
+        help_text=_(
+            "Leave blank if you want to let the software assign a common name suitable for your subnet"))
+    ip = models.IPAddressField(
+        _('IP address'),
+        blank=True,
+        help_text=_(
+            "Leave blank if you want to let the software assign the first available for your network."))
+    company = models.CharField(
+        _('company'), max_length=256,
+        blank=True, null=True)
+    name = models.CharField(
+        _('name'),
+        max_length=128,
+        help_text=_(
+            "It should be Name Surname, or hostname. It has to be unique in company"))
     email = models.EmailField(blank=True, default="")
-    operating_system = models.CharField(_('operating system'), max_length=32, choices=OS_CHOICES, blank=True, default=None, null=True)
+    operating_system = models.CharField(
+        _('operating system'),
+        max_length=32,
+        choices=OS_CHOICES,
+        blank=True,
+        default=None,
+        null=True)
     # Subnet can be null because of OpenVPNLog model needings (it logs whether client it sees in the network)
-    subnet = models.ForeignKey('VPNSubnet', verbose_name=_('Role'), db_index=True, null=True)
+    subnet = models.ForeignKey('VPNSubnet',
+                               verbose_name=_('Role'),
+                               db_index=True,
+                               null=True)
     enabled = models.BooleanField(_('enabled'), default=False)
     cert = models.TextField(_('certificate'), default="", blank=True)
     key = models.TextField(_('key'), default="", blank=True)
@@ -78,7 +112,8 @@ class Client(models.Model):
 
     cert_validity_start = models.DateTimeField(blank=True, null=True)
     cert_validity_end = models.DateTimeField(blank=True, null=True)
-    cert_distribution_token = models.CharField(max_length=128, blank=True, null=True)
+    cert_distribution_token = models.CharField(
+        max_length=128, blank=True, null=True)
     cert_distribution_on = models.DateTimeField(blank=True, null=True)
     cert_download_on = models.DateTimeField(blank=True, null=True)
     cert_public_download_on = models.DateTimeField(blank=True, null=True)
@@ -91,7 +126,7 @@ class Client(models.Model):
         return file(settings.CA_CERT).read()
 
     class Meta:
-        unique_together = (('ip', 'enabled'), ('company','name','enabled'))
+        unique_together = (('ip', 'enabled'), ('company', 'name', 'enabled'))
         ordering = ('subnet', 'company', 'name')
 
     def __unicode__(self):
@@ -114,7 +149,8 @@ class Client(models.Model):
     def bind_cert(self):
         try:
             self.cert = file(self.get_cert_filename(), "r").read()
-            self.key = file(self.get_cert_filename().replace(".crt", ".key"), "r").read()
+            self.key = file(self.get_cert_filename().replace(".crt", ".key"),
+                            "r").read()
         except IOError as e:
             if e.errno == 2:
                 raise CertNotFound( _("Certificate for %(obj)s" + \
@@ -138,19 +174,25 @@ class Client(models.Model):
 
         if not (self.cert or self.key):
 
-            log.debug("No certificate bound to client, check for an already existent certificate")
+            log.debug(
+                "No certificate bound to client, check for an already existent certificate")
             try:
                 self.bind_cert()
-                log.debug("Found and already existent certificate for %s" % self)
+                log.debug("Found and already existent certificate for %s" %
+                          self)
             except CertNotFound as e:
 
-                log.debug("OK, no certificate found for %s. Creating it..." % self)
+                log.debug("OK, no certificate found for %s. Creating it..." %
+                          self)
                 shell_cmd = PKITOOL % self.common_name
                 try:
                     call_shell(shell_cmd)
                 except CalledShellCommandError as e:
-                    error_log = "%s | return code %s | %s" % (e.shell_cmd, e.returncode, e.output)
-                    client_log = ClientActionsLog(action=ACTION_ERROR_CERT_CREATE, note=error_log)
+                    error_log = "%s | return code %s | %s" % (
+                        e.shell_cmd, e.returncode, e.output)
+                    client_log = ClientActionsLog(
+                        action=ACTION_ERROR_CERT_CREATE,
+                        note=error_log)
                     self.clientactionslog_set.add(client_log)
                     raise CertCreationError(e.output)
 
@@ -164,11 +206,13 @@ class Client(models.Model):
             self.clientactionslog_set.add(client_log)
             self.save()
         else:
-            raise PermissionDenied("You should delete certificate bound to this client before creating a new one")
+            raise PermissionDenied(
+                "You should delete certificate bound to this client before creating a new one")
 
         return True
 
     token_generator = tokens.CertDistributionTokenGenerator()
+
     def distribute_cert(self):
         """Create a token used to safe distribution for new certificate."""
 
@@ -184,23 +228,30 @@ class Client(models.Model):
 
     def check_token(self, token, remote_ip):
         rv = self.token_generator.check_token(self, token)
-        client_log = ClientActionsLog(action=ACTION_CERT_DISTRIBUTION_TOKEN_CHECKED,
-            remote_ip=remote_ip, note="result %s" % rv
-        )
+        client_log = ClientActionsLog(
+            action=ACTION_CERT_DISTRIBUTION_TOKEN_CHECKED,
+            remote_ip=remote_ip,
+            note="result %s" % rv)
         self.clientactionslog_set.add(client_log)
         return rv
 
     def revoke_cert(self):
-        p = subprocess.Popen(REVOKEFULL % self.common_name, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        p = subprocess.Popen(REVOKEFULL % self.common_name,
+                             shell=True,
+                             stdout=subprocess.PIPE,
+                             stderr=subprocess.PIPE)
         stdout, stderr = p.communicate()
 
         # Move files according to configuration
-        crl_default_name = os.path.join(settings.EASY_RSA_KEYS_DIR,"keys","crl.pem")
+        crl_default_name = os.path.join(settings.EASY_RSA_KEYS_DIR, "keys",
+                                        "crl.pem")
 
         # Update revocation timestamp
         self.revocation_on = datetime.datetime.now()
         self.enabled = False
-        client_log = ClientActionsLog(action=ACTION_CERT_REVOKED, note="== OUTPUT == %s\n== ERROR == %s" % (stdout, stderr))
+        client_log = ClientActionsLog(action=ACTION_CERT_REVOKED,
+                                      note="== OUTPUT == %s\n== ERROR == %s" %
+                                      (stdout, stderr))
         self.clientactionslog_set.add(client_log)
         self.save()
 
@@ -211,19 +262,21 @@ class Client(models.Model):
 
         for client in Client.objects.all():
             if (self.ip == client.ip) and (self.pk != client.pk):
-                raise ValidationError(_("IP %(ip)s has already been taken by client %(client)s. Please change it" % {
-                    'ip' : client.ip,
-                    'client' : client
-                }))
-
+                raise ValidationError(_(
+                    "IP %(ip)s has already been taken by client %(client)s. Please change it"
+                    % {
+                        'ip': client.ip,
+                        'client': client
+                    }))
 
         if subnet.topology == "net30":
             last_octet = int(self.ip.split('.')[-1])
             if last_octet not in self.subnet.net30_valid_last_octet_list:
-                msg = _("IP %(ip)s does not belong to valid IP addresses for subnet %(subnet)s") % {
-                   'ip' :self.ip,
-                   'subnet' : subnet
-                }
+                msg = _(
+                    "IP %(ip)s does not belong to valid IP addresses for subnet %(subnet)s") % {
+                        'ip': self.ip,
+                        'subnet': subnet
+                    }
                 log.error(msg)
                 raise ValidationError(msg)
 
@@ -232,11 +285,14 @@ class Client(models.Model):
 
             if bound_client_list.filter(ip__exact=self.ip).count() > 1:
 
-                msg = _("FOUND 2 IP %(ip)s IN THE SAME SUBNET %(subnet)s for clients %(clients)s") % {
-                   'ip' :self.ip,
-                   'subnet' : subnet,
-                   'clients' : ", ".join(map(lambda x : x.common_name, bound_client_list.filter(ip__exact=self.ip))),
-                }
+                msg = _(
+                    "FOUND 2 IP %(ip)s IN THE SAME SUBNET %(subnet)s for clients %(clients)s") % {
+                        'ip': self.ip,
+                        'subnet': subnet,
+                        'clients': ", ".join(map(lambda x: x.common_name,
+                                                 bound_client_list.filter(
+                                                     ip__exact=self.ip))),
+                    }
                 log.error(msg)
                 raise ValidationError(msg)
 
@@ -247,7 +303,8 @@ class Client(models.Model):
         # Move ip to the end of the list
         subnet = self.subnet
         bound_client_list = subnet.client_set.all().order_by('ip')
-        ordered_ip4_aton_list = map(lambda obj : netutils.inet_aton(obj.ip), bound_client_list)
+        ordered_ip4_aton_list = map(lambda obj: netutils.inet_aton(obj.ip),
+                                    bound_client_list)
         ordered_ip4_aton_list.sort()
 
         aton_new_ip4 = subnet.get_next_aton_try(ordered_ip4_aton_list[-1])
@@ -261,7 +318,8 @@ class Client(models.Model):
 
         if not self.ip:
             if self.subnet is None:
-                raise ValidationError(_("Please specify a subnet before adding a new client"))
+                raise ValidationError(_(
+                    "Please specify a subnet before adding a new client"))
             self.ip = self.subnet.get_free_ip4()
         else:
             self.clean_ip()
@@ -274,9 +332,9 @@ class Client(models.Model):
                 subnet_name = self.subnet.name.upper()
 
             d = {
-                'subnet' : subnet_name,
-                'company' : slugify(self.company).upper(),
-                'name' : slugify(self.name).upper(),
+                'subnet': subnet_name,
+                'company': slugify(self.company).upper(),
+                'name': slugify(self.name).upper(),
             }
 
             self.common_name = self.subnet.common_name_template % d
@@ -300,12 +358,14 @@ class Client(models.Model):
 
         super(Client, self).save(*args, **kw)
 
+
 class Subnet(models.Model):
 
-    name     = models.SlugField(_('name'), max_length=31, unique=True)
+    name = models.SlugField(_('name'), max_length=31, unique=True)
     human_name = models.CharField(_('human name'), max_length=128, unique=True)
-    base     = models.IPAddressField(_('base'), unique=True)
-    bits     = models.PositiveSmallIntegerField(_('bits')) # 0 - 32, ma forse 1 - 30
+    base = models.IPAddressField(_('base'), unique=True)
+    bits = models.PositiveSmallIntegerField(
+        _('bits'))  # 0 - 32, ma forse 1 - 30
     default_gw = models.IPAddressField(_('default gateway'))
     static_min = models.IPAddressField(_('first available address'))
     static_max = models.IPAddressField(_('last available address'))
@@ -317,7 +377,8 @@ class Subnet(models.Model):
         ordering = ['human_name']
         abstract = True
 
-    class SubnetFullException(Exception): pass
+    class SubnetFullException(Exception):
+        pass
 
     def __unicode__(self):
         return u"%s (%s/%d)" % (self.human_name, self.base, self.bits)
@@ -338,7 +399,8 @@ class Subnet(models.Model):
         #print bound_client_list
         if len(bound_client_list):
 
-            ordered_ip4_aton_list = map(lambda obj : netutils.inet_aton(obj.ip), bound_client_list)
+            ordered_ip4_aton_list = map(lambda obj: netutils.inet_aton(obj.ip),
+                                        bound_client_list)
             ordered_ip4_aton_list.sort()
 
             for aton_ip4 in ordered_ip4_aton_list:
@@ -362,53 +424,59 @@ class Subnet(models.Model):
         return netutils.inet_ntoa(aton_try)
 
     def ip4_is_inside_subnet(self, addr):
-        aton_laddr, aton_haddr = netutils.get_aton_bounds_from_cidr(self.base, self.bits)
-        return netutils.ip_is_inside_inet_aton_range(addr, aton_laddr, aton_haddr)
+        aton_laddr, aton_haddr = netutils.get_aton_bounds_from_cidr(self.base,
+                                                                    self.bits)
+        return netutils.ip_is_inside_inet_aton_range(addr, aton_laddr,
+                                                     aton_haddr)
 
     def dotted_quad_netmask(self):
         num = 0
         for i in range(31, 31 - self.bits, -1):
-            num += 2 ** i
+            num += 2**i
         return netutils.inet_ntoa(num)
 
     dotted_quad_netmask.short_description = 'netmask'
+
 
 class VPNSubnet(Subnet):
     """Adds VPN information to Subnet.
     """
     TOPOLOGY_NET30_VALID_LAST_OCTETS = [
-    [  1,  2], [  5,  6], [  9, 10], [ 13, 14], [ 17, 18],
-    [ 21, 22], [ 25, 26], [ 29, 30], [ 33, 34], [ 37, 38],
-    [ 41, 42], [ 45, 46], [ 49, 50], [ 53, 54], [ 57, 58],
-    [ 61, 62], [ 65, 66], [ 69, 70], [ 73, 74], [ 77, 78],
-    [ 81, 82], [ 85, 86], [ 89, 90], [ 93, 94], [ 97, 98],
-    [101,102], [105,106], [109,110], [113,114], [117,118],
-    [121,122], [125,126], [129,130], [133,134], [137,138],
-    [141,142], [145,146], [149,150], [153,154], [157,158],
-    [161,162], [165,166], [169,170], [173,174], [177,178],
-    [181,182], [185,186], [189,190], [193,194], [197,198],
-    [201,202], [205,206], [209,210], [213,214], [217,218],
-    [221,222], [225,226], [229,230], [233,234], [237,238],
-    [241,242], [245,246], [249,250], [253,254]
+        [1, 2], [5, 6], [9, 10], [13, 14], [17, 18], [21, 22], [25, 26],
+        [29, 30], [33, 34], [37, 38], [41, 42], [45, 46], [49, 50], [53, 54],
+        [57, 58], [61, 62], [65, 66], [69, 70], [73, 74], [77, 78], [81, 82],
+        [85, 86], [89, 90], [93, 94], [97, 98], [101, 102], [105, 106],
+        [109, 110], [113, 114], [117, 118], [121, 122], [125, 126], [129, 130],
+        [133, 134], [137, 138], [141, 142], [145, 146], [149, 150], [153, 154],
+        [157, 158], [161, 162], [165, 166], [169, 170], [173, 174], [177, 178],
+        [181, 182], [185, 186], [189, 190], [193, 194], [197, 198], [201, 202],
+        [205, 206], [209, 210], [213, 214], [217, 218], [221, 222], [225, 226],
+        [229, 230], [233, 234], [237, 238], [241, 242], [245, 246], [249, 250],
+        [253, 254]
     ]
-    TOPOLOGY_CHOICES = (
-        ('subnet', 'subnet'),
-        ('net30', 'net30'),
-    )
+    TOPOLOGY_CHOICES = (('subnet', 'subnet'),
+                        ('net30', 'net30'), )
     #TODO: add can_access_to attribute
 
-    bound_iface = models.CharField(verbose_name=_("bound interface"), max_length=16, blank=True)
-    topology = models.CharField(verbose_name=_("topology"), max_length=16, choices=TOPOLOGY_CHOICES, default=TOPOLOGY_CHOICES[0][0])
-    common_name_template = models.CharField(verbose_name=_("common name template"),
-        max_length=32, default="%(subnet)s-%(company)s-%(name)s",
-        help_text=_("Specify a python template string here. Allowed keys are 'name', 'company', 'subnet'")
-    )
+    bound_iface = models.CharField(verbose_name=_("bound interface"),
+                                   max_length=16,
+                                   blank=True)
+    topology = models.CharField(verbose_name=_("topology"),
+                                max_length=16,
+                                choices=TOPOLOGY_CHOICES,
+                                default=TOPOLOGY_CHOICES[0][0])
+    common_name_template = models.CharField(
+        verbose_name=_("common name template"),
+        max_length=32,
+        default="%(subnet)s-%(company)s-%(name)s",
+        help_text=_(
+            "Specify a python template string here. Allowed keys are 'name', 'company', 'subnet'"))
     config_server = models.TextField(_("server configuration"), blank=True)
     config_client = models.TextField(_("client configuration"), blank=True)
 
     @property
     def net30_valid_last_octet_list(self):
-        return map(lambda x: x[0] , self.TOPOLOGY_NET30_VALID_LAST_OCTETS)
+        return map(lambda x: x[0], self.TOPOLOGY_NET30_VALID_LAST_OCTETS)
 
     def __get_net30_next_aton_try_by_octets(self, octets):
         i = 0
@@ -451,15 +519,17 @@ class VPNSubnet(Subnet):
             octets = a_try.split(".")
             rv = self.__get_net30_next_aton_try_by_octets(octets)
             #DEBUG print "FOUND: %s try: %s" % (self, netutils.inet_ntoa(rv))
-        else: # i.e. if self.topology == 'subnet':
+        else:  # i.e. if self.topology == 'subnet':
             rv = super(VPNSubnet, self).get_next_aton_try(aton_try)
 
         return rv
 
+
 class ClientActionsLog(models.Model):
 
     client = models.ForeignKey(Client)
-    action = models.CharField(max_length=32) #DEBUG: disabled, choices=ACTIONS_LIST)
+    action = models.CharField(
+        max_length=32)  #DEBUG: disabled, choices=ACTIONS_LIST)
     on = models.DateTimeField(default=datetime.datetime.now, auto_now_add=True)
     remote_ip = models.IPAddressField(default="127.0.0.1")
     note = models.TextField(default="", blank=True)
@@ -471,4 +541,3 @@ class ClientActionsLog(models.Model):
 
     def __unicode__(self):
         return u"%s %s on %s" % (self.client, self.action, self.on)
-

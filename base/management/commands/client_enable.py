@@ -19,7 +19,7 @@ class Command(BaseCommand):
     help = 'Enable a client to access VPN. It must be invoked by root'
 
     def handle(self, *args, **options):
-        
+
         try:
             common_name = args[0]
         except:
@@ -29,18 +29,19 @@ class Command(BaseCommand):
         try:
             client = Client.objects.get(common_name=common_name)
         except Client.DoesNotExist:
-            raise CommandError("You should specify a common_name af an already existent host in OpenVPNmon database")
+            raise CommandError(
+                "You should specify a common_name af an already existent host in OpenVPNmon database")
 
         if client.enabled:
             raise CommandError("Client %s has already been enabled" % client)
 
         cmd = [
-                settings.HOOK_CLIENT_MANAGE, 
-                'enable',
-                client.common_name,
-                client.subnet.name,
-                client.ip,
-                client.subnet.dotted_quad_netmask(),
+            settings.HOOK_CLIENT_MANAGE,
+            'enable',
+            client.common_name,
+            client.subnet.name,
+            client.ip,
+            client.subnet.dotted_quad_netmask(),
         ]
 
         shell_cmd = " ".join(cmd)
@@ -48,13 +49,14 @@ class Command(BaseCommand):
         try:
             call_shell(shell_cmd)
         except CalledShellCommandError as e:
-            error_log = "%s | return code %s | %s" % (e.shell_cmd, e.returncode, e.output)
+            error_log = "%s | return code %s | %s" % (e.shell_cmd,
+                                                      e.returncode, e.output)
             log.debug(error_log)
-            client_log = ClientActionsLog(action=ACTION_ERROR_CLIENT_ENABLE, note=error_log)
+            client_log = ClientActionsLog(action=ACTION_ERROR_CLIENT_ENABLE,
+                                          note=error_log)
             client.clientactionslog_set.add(client_log)
-            raise CommandError(e.output) 
+            raise CommandError(e.output)
 
-        
         log.info("ENABLING -> CLIENT AUTH")
         #cmd = client_auth.Command()
         #cmd.handle(common_name)
@@ -62,14 +64,11 @@ class Command(BaseCommand):
         client.enabled = True
         client.save()
 
-        log_entry = ClientActionsLog(
-            client = client,
-            action = ACTION_CLIENT_ENABLED,
-            remote_ip = "127.0.0.1",
-        )
+        log_entry = ClientActionsLog(client=client,
+                                     action=ACTION_CLIENT_ENABLED,
+                                     remote_ip="127.0.0.1", )
 
         log_entry.save()
         log.info("Saved log_entry: %s" % log_entry)
 
         return 0
-

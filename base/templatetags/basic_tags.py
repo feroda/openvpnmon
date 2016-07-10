@@ -3,6 +3,7 @@ register = template.Library()
 
 from django.conf import settings
 
+
 @register.simple_tag
 def bool_img(value):
     if bool(value):
@@ -10,4 +11,3 @@ def bool_img(value):
     else:
         rv = '<img alt="False" src="%simg/admin/icon-no.gif">' % settings.ADMIN_MEDIA_PREFIX
     return rv
-
