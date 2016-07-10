@@ -75,14 +75,14 @@ def pre_cert_download(request, client_id, token):
 def _prepare_zip_certs_response(request, client):
 
     zipcontent, zipnotes = get_certs_zip_content_and_notes(client)
-    mimetype = 'application/zip'
-    response = HttpResponse(zipcontent, mimetype=mimetype)
+    content_type = 'application/zip'
+    response = HttpResponse(zipcontent, content_type=content_type)
     response[
         'Content-Disposition'] = 'attachment; filename=%s.zip' % settings.DOWNLOAD_CERT_ARCHIVE_BASENAME
-    log = ClientActionsLog(action=ACTION_CERT_DOWNLOADED,
+    client_log = ClientActionsLog(action=ACTION_CERT_DOWNLOADED,
                            remote_ip=request.META['REMOTE_ADDR'],
-                           note=zipnotes)
-    client.clientactionslog_set.add(log)
+                           note=zipnotes, client=client)
+    client_log.save()
     return response
 
 
