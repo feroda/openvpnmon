@@ -1,0 +1,16 @@
+{% load i18n %}
+
+<div class="client">
+    <div class="client-header">
+        <h2> {{ client.name }}</h2>
+    </div>
+        <p>Common name: {{ client.common_name }}</p>
+        <p>{% trans "CA Certificate" %}</p>
+        <pre>{{ client.ca }}</pre>
+        <p>{% trans "Certificate" %}</p>
+        <pre>{{ client.cert }}</pre>
+        <p>{% trans "Private Key" %}</p>
+        <pre>{{ client.key }}</pre>
+</div>
+<hr />
+

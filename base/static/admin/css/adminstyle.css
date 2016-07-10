@@ -1,0 +1,246 @@
+#header {
+    background-color:#993;
+}
+
+.module caption {
+    background : none;
+    background-color: #C6C400;
+}
+
+a:link, a:visited {
+    color : #993;
+}
+ul.messagelist {
+    margin-top: 8px;
+}
+ul.messagelist > li {
+    border-bottom: 1px solid black;
+    font-size: 1.3em;
+    padding-bottom: 0.4em;
+    padding-top: 0.4em;
+    margin-bottom: 0;
+}
+
+form p.help, .help {
+    font-weight : bold;
+    color : green;
+}
+
+.block {
+    /*border: 1px solid lightgrey;*/
+    margin: 1.2em 0;
+}
+
+#states, #actions {
+    /*border-left: 1px dotted lightgrey;*/
+}
+
+#states {
+    min-width : 50%;
+}
+#states_list { padding: 0; }
+#states_list li {
+    font-size: medium;
+    border-bottom: 1px solid grey;
+    list-style-position: inside;
+    margin: 0 10px;
+    padding: 0.8em;
+}
+
+li.success {
+    list-style-image : url('/static/img/check.png');
+}
+li.undone {
+    list-style-image : none;
+    list-style-type : circle;
+    background-color : lightgrey;
+    color : grey;
+}
+
+
+.running, li.running, ul.messagelist li.running {
+    background: url("/static/img/ajax-loader.gif") no-repeat scroll 5px 0.3em #FFFFCC;
+    opacity : 0.3;
+}
+
+#forward_action {
+    text-align : center;
+    position: relative;
+    bottom : 1em;
+}
+
+
+#progressbar {
+}
+
+#progressbar-msg {
+   text-align : center;
+   margin : 0.5em auto;
+}
+/*
+
+.object-tools a.addlink {
+    padding-top: 1em;
+    padding-bottom: 1em;
+}*/
+
+/***********/
+/** BUBBA **/
+/***********/
+#states_and_actions,
+
+table,
+table tr,
+table tr td {
+  border: 0;
+}
+table tr td.nested-block {
+  padding: 0;
+  border-right: 0;
+}
+
+table tr td.nested-block .note { padding: 5px; }
+table tr td.nested-block .note h3 { margin-bottom: 9px; }
+
+.block h2,
+table tr td.nested-block h2 {
+  border-right: 1px solid darkgrey;
+  border-bottom: 1px solid darkgrey;
+  border-bottom-right-radius: 14px;
+  display: inline-block;
+  padding: 8px 15px 8px 8px;
+  margin-top: 0;
+  margin-bottom: 0;
+  background-image: url('/static/img/nav-bg-reverse.gif');
+  background-repeat: x-repeat;
+  line-height: 0.85em;
+}
+
+div.nested-block-content-container {
+  background-color: #EAF4F7;
+  border: 1px solid gray;
+  border-radius: 0 6px 6px 6px;
+  margin: 0 8px;
+  min-height: 250px;
+}
+
+
+div#info,
+div#action-description {
+  padding: 12px 5px 5px 5px;
+  font-size: 1.4em;
+  line-height: 1.2em;
+  border-bottom: 1px dotted lightgray;
+  margin: 2px;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+}
+
+
+div.big_action_button {
+  background-color: #FFFFCC;
+  border: 2px outset black;
+  -moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  margin: 30px auto;
+  padding: 15px 20px;
+  text-align: center;
+  width: 120px;
+  font-size: 2em;
+  font-weight: bold;
+}
+div.big_action_button a:link, 
+div.big_action_button a:visited {
+  color: black;
+}
+
+span.state_cl {
+  -moz-border-radius: 15px 15px 15px 15px;
+  border-radius: 15px 15px 15px 15px;
+  -webkit-border-radius: 15px 15px 15px 15px;
+  border: 1px solid gray;
+  display: block;
+  font-size: 1.4em;
+  font-weight: bold;
+  padding: 6px 2px;
+  text-align: center;
+  margin: 0 auto;
+  width: inherit;
+  background-color: white;
+}
+span#last_state {
+  margin-bottom: 5px;
+  margin-top: 5px;
+}
+span#state {
+  margin-top: 5px;
+}
+.note img {
+  display: block;
+  text-align: center;
+  margin: 0 auto;
+}
+.note span#happened {
+  text-align: right;
+  display: block;
+  font-style: italic;
+  margin-top: 4px;
+}
+
+#notifications {
+  background-color: #EAF4F7;
+  border: 1px solid gray;
+  border-radius: 0 6px 6px 6px;
+}
+
+.alert {
+  background-color: red;
+  color : white;
+  font-weight : bold;
+}
+.green, .mybutton.green {
+  background-color: green;
+  color : white;
+  font-weight : bold;
+}
+
+li.running_state {
+    background-color: grey;
+    color: white;
+}
+
+.mybutton {
+    
+    background-color: white;
+    border-color: #DDDDDD #AAAAAA #AAAAAA #DDDDDD;
+    border-style: solid;
+    border-width: 1px;
+    color: black;
+    display: inline-block;
+    padding: 0.8em 0;
+    width: 70px;
+    text-align : center;
+
+}
+
+.mybuttoncaptioninline {
+    display : inline;
+}
+
+.mybuttoncaptionright {
+    float : right;
+}
+
+.module h2 {
+    font-size : medium;
+}
+
+th, td {
+    //vertical-align: middle;
+}
+
+#other-actions {
+    text-align : center;
+}

@@ -1,0 +1,18 @@
+{% load basic_tags %}
+
+<ol>
+    <li>DNS attivo: {% bool_img dns_up.check %} {{ dns_up.descr }}</li> 
+    {% ifequal dns_resolve.check None %}
+        <li>DNS risoluzione corretta: NON TESTABILE</li>
+    {% else %}
+        <li>DNS risoluzione corretta: {% bool_img dns_resolve.check %} {{ dns_resolve.descr }}</li>
+    {% endifequal %}
+    {% ifequal tcp_connection_up.check None %}
+        <li>VPN connessione: NON TESTABILE</li>
+    {% else %}
+        <li>VPN connessione: {% bool_img tcp_connection_up.check %} {{ tcp_connection_up.descr }}</li>
+    {% endifequal %}
+</ol>
+{% if tcp_connection_up %}
+    Pronto su <a href="http://{{ hostname }}" target="_blank">http://{{ hostname }}</a>
+{% endif %}
