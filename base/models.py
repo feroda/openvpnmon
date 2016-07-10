@@ -73,7 +73,7 @@ class Client(models.Model):
     # It is used to bind:
     # 1. customers to ewons
     # 2. service stations to customers to let them access to every customer's ewon
-    
+
     can_access_to = models.ManyToManyField("self", null=True, blank=True)
 
     cert_validity_start = models.DateTimeField(blank=True, null=True)
@@ -88,11 +88,11 @@ class Client(models.Model):
 
     @property
     def ca(self):
-        return file(settings.CA_CERT).read()        
+        return file(settings.CA_CERT).read()
 
     class Meta:
         unique_together = (('ip', 'enabled'), ('company','name','enabled'))
-        ordering = ('subnet', 'company', 'name') 
+        ordering = ('subnet', 'company', 'name')
 
     def __unicode__(self):
         rv = self.common_name
@@ -143,7 +143,7 @@ class Client(models.Model):
                 self.bind_cert()
                 log.debug("Found and already existent certificate for %s" % self)
             except CertNotFound as e:
-                
+
                 log.debug("OK, no certificate found for %s. Creating it..." % self)
                 shell_cmd = PKITOOL % self.common_name
                 try:
@@ -152,7 +152,7 @@ class Client(models.Model):
                     error_log = "%s | return code %s | %s" % (e.shell_cmd, e.returncode, e.output)
                     client_log = ClientActionsLog(action=ACTION_ERROR_CERT_CREATE, note=error_log)
                     self.clientactionslog_set.add(client_log)
-                    raise CertCreationError(e.output) 
+                    raise CertCreationError(e.output)
 
                 basename = settings.EASY_RSA_KEYS_DIR + self.common_name
                 self.bind_cert()
@@ -184,7 +184,7 @@ class Client(models.Model):
 
     def check_token(self, token, remote_ip):
         rv = self.token_generator.check_token(self, token)
-        client_log = ClientActionsLog(action=ACTION_CERT_DISTRIBUTION_TOKEN_CHECKED, 
+        client_log = ClientActionsLog(action=ACTION_CERT_DISTRIBUTION_TOKEN_CHECKED,
             remote_ip=remote_ip, note="result %s" % rv
         )
         self.clientactionslog_set.add(client_log)
@@ -215,13 +215,13 @@ class Client(models.Model):
                     'ip' : client.ip,
                     'client' : client
                 }))
-                
-        
+
+
         if subnet.topology == "net30":
             last_octet = int(self.ip.split('.')[-1])
             if last_octet not in self.subnet.net30_valid_last_octet_list:
                 msg = _("IP %(ip)s does not belong to valid IP addresses for subnet %(subnet)s") % {
-                   'ip' :self.ip, 
+                   'ip' :self.ip,
                    'subnet' : subnet
                 }
                 log.error(msg)
@@ -231,15 +231,15 @@ class Client(models.Model):
             bound_client_list = subnet.client_set.all().order_by('ip')
 
             if bound_client_list.filter(ip__exact=self.ip).count() > 1:
-                
+
                 msg = _("FOUND 2 IP %(ip)s IN THE SAME SUBNET %(subnet)s for clients %(clients)s") % {
-                   'ip' :self.ip, 
+                   'ip' :self.ip,
                    'subnet' : subnet,
                    'clients' : ", ".join(map(lambda x : x.common_name, bound_client_list.filter(ip__exact=self.ip))),
                 }
                 log.error(msg)
                 raise ValidationError(msg)
-        
+
     def fix_client_ip(self):
 
         log.info("Fixing client %s ip address %s" % (self, self.ip))
@@ -251,7 +251,7 @@ class Client(models.Model):
         ordered_ip4_aton_list.sort()
 
         aton_new_ip4 = subnet.get_next_aton_try(ordered_ip4_aton_list[-1])
-        
+
         self.ip = netutils.inet_ntoa(aton_new_ip4)
         self.enabled = False
         self.save()
@@ -268,11 +268,11 @@ class Client(models.Model):
 
         if not self.common_name:
             # If cn is blank it should be created
-            if self.subnet.name == 'customer-ssl':
-                subnet_name = 'CUSTOMER'
+            if self.subnet.name.endswith('-ssl'):
+                subnet_name = self.subnet.name[:-4].upper()
             else:
                 subnet_name = self.subnet.name.upper()
-                
+
             d = {
                 'subnet' : subnet_name,
                 'company' : slugify(self.company).upper(),
@@ -299,7 +299,7 @@ class Client(models.Model):
             self.key = u''
 
         super(Client, self).save(*args, **kw)
-            
+
 class Subnet(models.Model):
 
     name     = models.SlugField(_('name'), max_length=31, unique=True)
@@ -333,16 +333,16 @@ class Subnet(models.Model):
         aton_max = netutils.inet_aton(self.static_max)
         aton_try = self.get_start_aton_try()
         bound_client_list = self.client_set.all().order_by('ip')
-            
+
         #print "AAAA %s %s - %s" % (self, self.static_min, self.static_max)
         #print bound_client_list
         if len(bound_client_list):
 
             ordered_ip4_aton_list = map(lambda obj : netutils.inet_aton(obj.ip), bound_client_list)
             ordered_ip4_aton_list.sort()
-            
+
             for aton_ip4 in ordered_ip4_aton_list:
-                
+
                 if aton_ip4 >= aton_min:
 
                     if (aton_try == aton_max):
@@ -374,7 +374,7 @@ class Subnet(models.Model):
     dotted_quad_netmask.short_description = 'netmask'
 
 class VPNSubnet(Subnet):
-    """Adds VPN information to Subnet. 
+    """Adds VPN information to Subnet.
     """
     TOPOLOGY_NET30_VALID_LAST_OCTETS = [
     [  1,  2], [  5,  6], [  9, 10], [ 13, 14], [ 17, 18],
@@ -399,8 +399,8 @@ class VPNSubnet(Subnet):
 
     bound_iface = models.CharField(verbose_name=_("bound interface"), max_length=16, blank=True)
     topology = models.CharField(verbose_name=_("topology"), max_length=16, choices=TOPOLOGY_CHOICES, default=TOPOLOGY_CHOICES[0][0])
-    common_name_template = models.CharField(verbose_name=_("common name template"), 
-        max_length=32, default="%(subnet)s-%(company)s-%(name)s", 
+    common_name_template = models.CharField(verbose_name=_("common name template"),
+        max_length=32, default="%(subnet)s-%(company)s-%(name)s",
         help_text=_("Specify a python template string here. Allowed keys are 'name', 'company', 'subnet'")
     )
     config_server = models.TextField(_("server configuration"), blank=True)
@@ -427,7 +427,7 @@ class VPNSubnet(Subnet):
             octets[-1] = '255'
             a_try = ".".join(octets)
             aton_try = netutils.inet_aton(a_try) + 2
-            
+
         return aton_try
 
     def get_start_aton_try(self):
@@ -443,7 +443,7 @@ class VPNSubnet(Subnet):
             # But it could change in future implementations
             rv = super(VPNSubnet, self).get_start_aton_try()
         return rv
-        
+
     def get_next_aton_try(self, aton_try):
         #DEBUG print "NEED NEXT: %s try: %s" % (self, netutils.inet_ntoa(aton_try))
         if self.topology == 'net30':
@@ -463,7 +463,7 @@ class ClientActionsLog(models.Model):
     on = models.DateTimeField(default=datetime.datetime.now, auto_now_add=True)
     remote_ip = models.IPAddressField(default="127.0.0.1")
     note = models.TextField(default="", blank=True)
-    
+
     class Meta:
         ordering = ["-on"]
         get_latest_by = "on"
