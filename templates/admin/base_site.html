@@ -1,20 +1,20 @@
 {% extends "admin/base.html" %}
-{% load i18n %}
+{% load i18n basic_tags %}
 
 {% block extrahead %}
-    <link rel="stylesheet" type="text/css" href="{{ MEDIA_URL }}/css/adminstyle.css" />
+    <link rel="stylesheet" type="text/css" href="{% static_url %}css/adminstyle.css" />
 {% endblock %}
 
-{% block title %}{{ title|escape }} OpenVPN Monitor {% endblock %}
+{% block title %}{{ title|escape }} OpenVPN Config {% endblock %}
 
 
 {% block userlinks %}
-    <a target="_blank" href="{{ MEDIA_URL }}/htmldoc/index.html">{% trans 'Documentation' %}</a> /
+    <a target="_blank" href="{% static_url %}/htmldoc/index.html">{% trans 'Documentation' %}</a> /
     {{ block.super }}
 {% endblock %}
 
 {% block branding %}
-<h1 id="site-name">OpenVPN Monitor </h1>
+<h1 id="site-name">OpenVPN Config </h1>
 {% endblock %}
 
 {% block nav-global %}{% endblock %}

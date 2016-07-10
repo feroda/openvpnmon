@@ -20,7 +20,7 @@
     <p><div style="font-size:x-large; display:inline;">{{ client }}</div>
      <div style="display:inline;"> (
     {% if client.email %}
-         {# href="mailto:{{client.email}}?Subject={% trans "VPNConfiguration" %}&body={% trans "You can download your configuration at the following url: %}\n" %}{% url base.views.pre_cert_download token=client.cert_distribution_token,client_id=client.id %}"> #} 
+         {# href="mailto:{{client.email}}?Subject={% trans "VPNConfiguration" %}&body={% trans "You can download your configuration at the following url: %}\n" %}{% url 'base.views.pre_cert_download' token=client.cert_distribution_token client_id=client.id %}"> #}
         {{ client.email }}
     {% else %}
          {% trans "email address not set" %}
@@ -29,7 +29,7 @@
     </p>
     <ul>
         <li>token: {{ client.cert_distribution_token }}</li>
-        <li>url: <a href="{{ CERTS_PUBLIC_DOWNLOAD_URL_BASE }}{% url base.views.pre_cert_download token=client.cert_distribution_token,client_id=client.id %}">{% url base.views.pre_cert_download token=client.cert_distribution_token,client_id=client.id %}</a></li>
+        <li>url: <a href="{{ CERTS_PUBLIC_DOWNLOAD_URL_BASE }}{% url 'base.views.pre_cert_download' token=client.cert_distribution_token client_id=client.id %}">{% url 'base.views.pre_cert_download' token=client.cert_distribution_token client_id=client.id %}</a></li>
     </ul>
     </p>
 {% endfor %}
