@@ -1,16 +1,19 @@
+import subprocess
+import os
+import datetime
+import logging
+
 from django.db import models
-from django.utils.translation import ugettext, ugettext_lazy as _
-from django.db.models import Q
-from openvpnmon.base import netutils
+from django.utils.translation import ugettext_lazy as _
 from django.template.defaultfilters import slugify
 from django.conf import settings
 from django.core.exceptions import PermissionDenied, ValidationError
 
-from openvpnmon.base import tokens
 from openvpnmon.utils import call_shell, CalledShellCommandError
 from openvpnmon.exceptions import CertNotFound, CertCreationError
 
-import subprocess, os, datetime, logging
+import netutils
+import tokens
 
 ACTION_CLIENT_ENABLED = "CLIENT ENABLED"
 ACTION_CLIENT_AUTHORIZATION_UPDATE = "CLIENT AUTHORIZATION UPDATE"
@@ -395,8 +398,8 @@ class Subnet(models.Model):
         aton_try = self.get_start_aton_try()
         bound_client_list = self.client_set.all().order_by('ip')
 
-        #print "AAAA %s %s - %s" % (self, self.static_min, self.static_max)
-        #print bound_client_list
+        # print "AAAA %s %s - %s" % (self, self.static_min, self.static_max)
+        # print bound_client_list
         if len(bound_client_list):
 
             ordered_ip4_aton_list = map(lambda obj: netutils.inet_aton(obj.ip),
@@ -411,11 +414,11 @@ class Subnet(models.Model):
                         raise Subnet.SubnetFullException
 
                     elif (aton_try == aton_ip4):
-                        #Try next one
+                        # Try next one
                         aton_try = self.get_next_aton_try(aton_try)
 
                     else:
-                        #Found!
+                        # Found!
                         rv = aton_try
                         break
         else:
@@ -456,7 +459,7 @@ class VPNSubnet(Subnet):
     ]
     TOPOLOGY_CHOICES = (('subnet', 'subnet'),
                         ('net30', 'net30'), )
-    #TODO: add can_access_to attribute
+    # TODO: add can_access_to attribute
 
     bound_iface = models.CharField(verbose_name=_("bound interface"),
                                    max_length=16,
@@ -483,7 +486,7 @@ class VPNSubnet(Subnet):
         TOPO_VLO = self.TOPOLOGY_NET30_VALID_LAST_OCTETS
         try:
             while TOPO_VLO[i][0] <= int(octets[-1]):
-                #DEBUG print "%s %s - %s" % ("a", self.topology, octets)
+                # DEBUG print "%s %s - %s" % ("a", self.topology, octets)
                 i += 1
             octets[-1] = str(TOPO_VLO[i][0])
             a_try = ".".join(octets)
@@ -505,7 +508,7 @@ class VPNSubnet(Subnet):
         if self.topology == 'net30':
             octets = self.static_min.split(".")
             rv = self.__get_net30_next_aton_try_by_octets(octets)
-            #DEBUG print "START: %s try: %s" % (self, netutils.inet_ntoa(rv))
+            # DEBUG print "START: %s try: %s" % (self, netutils.inet_ntoa(rv))
         else:
             # i.e. if self.topology == 'subnet':
             # But it could change in future implementations
@@ -513,12 +516,12 @@ class VPNSubnet(Subnet):
         return rv
 
     def get_next_aton_try(self, aton_try):
-        #DEBUG print "NEED NEXT: %s try: %s" % (self, netutils.inet_ntoa(aton_try))
+        # DEBUG print "NEED NEXT: %s try: %s" % (self, netutils.inet_ntoa(aton_try))
         if self.topology == 'net30':
             a_try = netutils.inet_ntoa(aton_try)
             octets = a_try.split(".")
             rv = self.__get_net30_next_aton_try_by_octets(octets)
-            #DEBUG print "FOUND: %s try: %s" % (self, netutils.inet_ntoa(rv))
+            # DEBUG print "FOUND: %s try: %s" % (self, netutils.inet_ntoa(rv))
         else:  # i.e. if self.topology == 'subnet':
             rv = super(VPNSubnet, self).get_next_aton_try(aton_try)
 
@@ -529,7 +532,7 @@ class ClientActionsLog(models.Model):
 
     client = models.ForeignKey(Client)
     action = models.CharField(
-        max_length=32)  #DEBUG: disabled, choices=ACTIONS_LIST)
+        max_length=32)  # DEBUG: disabled, choices=ACTIONS_LIST)
     on = models.DateTimeField(default=datetime.datetime.now, auto_now_add=True)
     remote_ip = models.IPAddressField(default="127.0.0.1")
     note = models.TextField(default="", blank=True)

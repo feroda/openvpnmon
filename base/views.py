@@ -1,3 +1,6 @@
+import datetime
+import socket
+
 from django.http import HttpResponseBadRequest, HttpResponse, Http404
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.admin.views.decorators import staff_member_required
@@ -6,10 +9,9 @@ from django.shortcuts import render_to_response, get_object_or_404, redirect
 from django.template import RequestContext
 from django.conf import settings
 
-from openvpnmon.base.models import Client, ACTION_CERT_DOWNLOADED, ClientActionsLog
-from openvpnmon.base.utils import zipfile_info, get_certs_zip_content_and_notes
+from base.models import Client, ACTION_CERT_DOWNLOADED, ClientActionsLog
+from base.utils import zipfile_info, get_certs_zip_content_and_notes
 
-import datetime, socket
 
 
 def index(request):

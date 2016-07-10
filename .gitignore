@@ -1,2 +1,4 @@
 settings.py
 *.pyc
+*.sqlite3
+extras/easy-rsa/keys

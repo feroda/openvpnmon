@@ -1,14 +1,12 @@
 from django.contrib import admin
 from django.core import urlresolvers
-from django.utils.translation import ugettext, ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _
 from django import forms
 from django.contrib.contenttypes.models import ContentType
 from django.http import HttpResponseRedirect
 from django.contrib import messages
 
-from openvpnmon.base.models import Client, VPNSubnet, ClientActionsLog
-
-from django.conf import settings
+from base.models import Client, VPNSubnet, ClientActionsLog
 
 
 def disable_field(field):
@@ -21,8 +19,6 @@ def disable_field(field):
 
 
 class ClientForm(forms.ModelForm):
-    class Meta:
-        model = Client
 
     def __new__(cls, *args, **kw):
         cls = super(ClientForm, cls).__new__(cls, *args, **kw)
@@ -31,6 +27,10 @@ class ClientForm(forms.ModelForm):
         cls.base_fields['cert'].widget.attrs.update({'rows': 40})
         cls.base_fields['key'].widget.attrs.update({'rows': 20})
         return cls
+
+    class Meta:
+        model = Client
+        exclude = []
 
     def clean_name(self):
         cnames = Client.objects.filter(name=self.cleaned_data["name"])
