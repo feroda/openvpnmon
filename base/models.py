@@ -76,9 +76,10 @@ class Client(models.Model):
         blank=True,
         help_text=_(
             "Leave blank if you want to let the software assign a common name suitable for your subnet"))
-    ip = models.IPAddressField(
+    ip = models.GenericIPAddressField(
         _('IP address'),
         blank=True,
+        null=True,
         help_text=_(
             "Leave blank if you want to let the software assign the first available for your network."))
     company = models.CharField(
@@ -111,7 +112,7 @@ class Client(models.Model):
     # 1. customers to ewons
     # 2. service stations to customers to let them access to every customer's ewon
 
-    can_access_to = models.ManyToManyField("self", null=True, blank=True)
+    can_access_to = models.ManyToManyField("self", blank=True)
 
     cert_validity_start = models.DateTimeField(blank=True, null=True)
     cert_validity_end = models.DateTimeField(blank=True, null=True)
@@ -366,12 +367,12 @@ class Subnet(models.Model):
 
     name = models.SlugField(_('name'), max_length=31, unique=True)
     human_name = models.CharField(_('human name'), max_length=128, unique=True)
-    base = models.IPAddressField(_('base'), unique=True)
+    base = models.GenericIPAddressField(_('base'), unique=True)
     bits = models.PositiveSmallIntegerField(
         _('bits'))  # 0 - 32, ma forse 1 - 30
-    default_gw = models.IPAddressField(_('default gateway'))
-    static_min = models.IPAddressField(_('first available address'))
-    static_max = models.IPAddressField(_('last available address'))
+    default_gw = models.GenericIPAddressField(_('default gateway'))
+    static_min = models.GenericIPAddressField(_('first available address'))
+    static_max = models.GenericIPAddressField(_('last available address'))
     description = models.TextField(verbose_name=_('description'), blank=True)
 
     class Meta:
@@ -533,8 +534,8 @@ class ClientActionsLog(models.Model):
     client = models.ForeignKey(Client)
     action = models.CharField(
         max_length=32)  # DEBUG: disabled, choices=ACTIONS_LIST)
-    on = models.DateTimeField(default=datetime.datetime.now, auto_now_add=True)
-    remote_ip = models.IPAddressField(default="127.0.0.1")
+    on = models.DateTimeField(auto_now=True)
+    remote_ip = models.GenericIPAddressField(default="127.0.0.1")
     note = models.TextField(default="", blank=True)
 
     class Meta:

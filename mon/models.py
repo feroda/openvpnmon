@@ -12,8 +12,8 @@ from base.models import Client
 class OpenVPNLog(models.Model):
 
     common_name = models.CharField(max_length=128)
-    public_ip = models.IPAddressField(_('IP address'))
-    vpn_ip = models.IPAddressField(_('VPN IP address'), db_index=True)
+    public_ip = models.GenericIPAddressField(_('IP address'))
+    vpn_ip = models.GenericIPAddressField(_('VPN IP address'), db_index=True)
     vpn_iface = models.CharField(_('VPN iface'), max_length=8, db_index=True)
     when_connect = models.DateTimeField()
     when_disconnect = models.DateTimeField(null=True)
