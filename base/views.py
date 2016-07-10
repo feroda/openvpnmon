@@ -13,7 +13,6 @@ from base.models import Client, ACTION_CERT_DOWNLOADED, ClientActionsLog
 from base.utils import zipfile_info, get_certs_zip_content_and_notes
 
 
-
 def index(request):
     return redirect('%sadmin/' % settings.URL_PREFIX)
 

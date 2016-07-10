@@ -2,11 +2,10 @@
 
 # It is very important that this script exits on failure
 # -e option it is here to provide this feature
-# but be careful to write right execution steps 
+# but be careful to write right execution steps
 set -e
 
 IPTABLES=`which iptables`
-#OPENVPN_BASE_DIR="/WORK/Repo/Angelantoni/openvpnmon_att"
 OPENVPN_BASE_DIR="/etc/openvpn"
 AUTOMATONS_NETWORK_NAME="acs"
 
@@ -45,8 +44,8 @@ case "$1" in
         CLIENT=$2 #client common name
         NETWORK=$3 #example: acs
         VPN_IP=$4 #example: 10.0.0.5
-        VPN_NETMASK=$5 #example: 255.255.255.0 
-        
+        VPN_NETMASK=$5 #example: 255.255.255.0
+
         if [ $NETWORK = $AUTOMATONS_NETWORK_NAME ]; then
             CCD_DIR=$OPENVPN_BASE_DIR/ccd-ewons
             if [ ! -e $CCD_DIR/$CLIENT ]; then
@@ -55,7 +54,7 @@ case "$1" in
                 lsv="$(echo $VPN_IP | cut -d. -f4)"
                 # Edge cases (255) never happens. For valid IPs passed here take a look at
                 # http://openvpn.net/index.php/open-source/documentation/howto.html#policy
-                VPN_IP_P2P="$baseaddr.$(( $lsv + 1 ))" 
+                VPN_IP_P2P="$baseaddr.$(( $lsv + 1 ))"
                 echo "ifconfig-push $VPN_IP $VPN_IP_P2P" >> $CCD_DIR/$CLIENT;
                 #Add name to DNS
                 echo "$VPN_IP $CLIENT $CLIENT" >> $OPENVPN_BASE_DIR/ewon_hosts;
@@ -68,7 +67,7 @@ case "$1" in
                 echo "ifconfig-push $VPN_IP $VPN_NETMASK" >> $CCD_DIR/$CLIENT;
             fi
         fi
-        
+
         # Adds new IP to Munin monitoring system
         # mon_ip VPN_IP
         echo $@;
@@ -90,7 +89,7 @@ case "$1" in
         # add it again as last rule
         echo $IPTABLES -D FORWARD --in-interface $INIFACE --src $INIP -j DROP
         echo $IPTABLES -A FORWARD --in-interface $INIFACE --src $INIP -j DROP
-        
+
         ;;
 
     access-flush)
@@ -100,12 +99,12 @@ case "$1" in
         # Test for iptables to work
         $IPTABLES -L INPUT 1
 
-        $IPTABLES -L block -n -v | grep $INIP | awk '{ print $6" "$7" "$8" "$9" "$3 }'| while read line; do 
+        $IPTABLES -L block -n -v | grep $INIP | awk '{ print $6" "$7" "$8" "$9" "$3 }'| while read line; do
             cmdline=${line//\*/NOPAR}
-            iptables_remove_rule $cmdline; 
+            iptables_remove_rule $cmdline;
         done
         ;;
-    *) 
+    *)
         echo "Usage <enable,access-allow,access-block> [...]";
         ;;
 esac
