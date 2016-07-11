@@ -5,6 +5,7 @@ import os
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 VERSION = file(os.path.join(BASE_DIR, 'VERSION')).read().strip()
+PROJECT_ROOT = BASE_DIR  # DEPRECATED
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.9/howto/deployment/checklist/
@@ -180,7 +181,6 @@ EASY_RSA_DIR = os.path.join(BASE_DIR, "extras", "easy-rsa")
 EASY_RSA_KEYS_DIR = os.path.join(EASY_RSA_DIR, "keys")
 EASY_RSA_VARS_FILE = os.path.join(EASY_RSA_DIR, "vars")
 CA_CERT = os.path.join(EASY_RSA_KEYS_DIR, 'ca.crt')
-CA_KEY = os.path.join(EASY_RSA_KEYS_DIR, 'ca.key')
 CERTS_PUBLIC_DOWNLOAD_URL_BASE = "https://localhost"
 VPN_HOME_PAGE = "http://wwwvpnserver"
 HOOK_CLIENT_MANAGE = BASE_DIR + "/extras/client-manage.sh"

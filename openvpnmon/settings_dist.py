@@ -11,8 +11,6 @@ URL_PREFIX = ""
 
 HARDENING = True
 
-CA_CERT = "/absolute/path/to/ca/cert"
-CA_KEY = "/absolute/path/to/ca/key"
 CERTS_PUBLIC_DOWNLOAD_URL_BASE = "https://localhost"
 VPN_HOME_PAGE = "http://wwwvpnserver"
 HOOK_CLIENT_MANAGE = BASE_DIR + "/extras/client-manage.sh"
