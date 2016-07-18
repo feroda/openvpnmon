@@ -177,13 +177,13 @@ URL_PREFIX = ""
 
 HARDENING = True
 
-EASY_RSA_DIR = os.path.join(BASE_DIR, "extras", "easy-rsa")
+EASY_RSA_DIR = os.path.join(BASE_DIR, "..", "extras", "easy-rsa")
 EASY_RSA_KEYS_DIR = os.path.join(EASY_RSA_DIR, "keys")
 EASY_RSA_VARS_FILE = os.path.join(EASY_RSA_DIR, "vars")
 CA_CERT = os.path.join(EASY_RSA_KEYS_DIR, 'ca.crt')
 CERTS_PUBLIC_DOWNLOAD_URL_BASE = "https://localhost"
 VPN_HOME_PAGE = "http://wwwvpnserver"
-HOOK_CLIENT_MANAGE = BASE_DIR + "/extras/client-manage.sh"
+HOOK_CLIENT_MANAGE = os.path.join(BASE_DIR, "..", "extras", "client-manage.sh")
 
 # Name for downloaded cert archive file and files within it
 DOWNLOAD_CERT_ARCHIVE_BASENAME = "certs"
