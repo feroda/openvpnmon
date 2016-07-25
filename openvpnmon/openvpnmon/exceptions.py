@@ -1,3 +1,9 @@
+import logging
+from django.core.management.base import CommandError
+
+log = logging.getLogger('openvpnmon')
+
+
 class ProgrammingError(Exception):
     pass
 
@@ -36,3 +42,9 @@ class MultipleActiveJobError(Exception):
 
 class StoppedThreadException(Exception):
     pass
+
+
+class CommandLogError(CommandError):
+    def __init__(self, value):
+        super(CommandLogError, self).__init__(value)
+        log.error(value)

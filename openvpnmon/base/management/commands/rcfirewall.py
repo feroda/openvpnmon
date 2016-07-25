@@ -1,10 +1,10 @@
 from django.core.management.base import BaseCommand, CommandError
-from openvpnmon.base.models import Client, ACTION_CLIENT_ENABLED
-from openvpnmon.base.models import ClientActionsLog
-from openvpnmon.base.management.commands import client_auth
+from base.models import Client, ACTION_CLIENT_ENABLED
+from base.models import ClientActionsLog
+from base.management.commands import client_auth
 
 from django.conf import settings
-from exceptions import CommandLogError
+from openvpnmon.exceptions import CommandLogError
 import os, logging, datetime
 import subprocess
 

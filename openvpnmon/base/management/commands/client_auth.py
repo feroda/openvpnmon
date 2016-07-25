@@ -1,11 +1,11 @@
 from django.core.management.base import BaseCommand, CommandError
-from openvpnmon.base.models import Client, ACTION_CLIENT_AUTHORIZATION_UPDATE, ACTION_ERROR_CLIENT_AUTHORIZE
-from openvpnmon.base.models import ClientActionsLog
+from base.models import Client, ACTION_CLIENT_AUTHORIZATION_UPDATE, ACTION_ERROR_CLIENT_AUTHORIZE
+from base.models import ClientActionsLog
 from openvpnmon.utils import call_shell, CalledShellCommandError
 from openvpnmon.exceptions import ClientAuthError
 
 from django.conf import settings
-from exceptions import CommandLogError
+from openvpnmon.exceptions import CommandLogError
 import os, logging, datetime
 import subprocess
 

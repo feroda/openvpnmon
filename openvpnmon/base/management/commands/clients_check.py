@@ -1,12 +1,12 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.core.exceptions import PermissionDenied, ValidationError
 
-from openvpnmon.base.management.commands import client_enable
-from openvpnmon.base.models import Client
-from openvpnmon.base import netutils
+from base.management.commands import client_enable
+from base.models import Client
+from base import netutils
 
 from django.conf import settings
-from exceptions import CommandLogError
+from openvpnmon.exceptions import CommandLogError
 import os, logging, datetime
 import subprocess
 

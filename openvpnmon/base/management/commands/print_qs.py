@@ -3,7 +3,7 @@ from django.conf import settings
 from django.db.models import get_model
 from django.db.models.query import QuerySet
 
-from openvpnmon.djangolib import get_qs_filter_dict_from_str, get_instance_dict_from_attrs
+from djangolib import get_qs_filter_dict_from_str, get_instance_dict_from_attrs
 from openvpnmon.lib import get_params_from_template
 
 import logging
