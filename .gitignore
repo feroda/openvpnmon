@@ -4,3 +4,4 @@ settings.py
 extras/easy-rsa/keys
 *.log
 *.swp
+vars
