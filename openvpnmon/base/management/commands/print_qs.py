@@ -1,9 +1,9 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.conf import settings
-from django.db.models import get_model
+from django.apps import apps
 from django.db.models.query import QuerySet
 
-from djangolib import get_qs_filter_dict_from_str, get_instance_dict_from_attrs
+from openvpnmon.djangolib import get_qs_filter_dict_from_str, get_instance_dict_from_attrs
 from openvpnmon.lib import get_params_from_template
 
 import logging
@@ -15,6 +15,10 @@ class Command(BaseCommand):
     args = "<app.model> <python_template> [querySet filter]"
     help = 'Print a querySet following a template'
 
+    def add_arguments(self, parser):
+
+        parser.add_argument('args', nargs='+', type=str)
+
     def handle(self, *args, **options):
 
         try:
@@ -24,7 +28,7 @@ class Command(BaseCommand):
             raise CommandError("Usage print_qs: %s" % (self.args))
 
         try:
-            model = get_model(*model_name.split('.'))
+            model = apps.get_model(*model_name.split('.'))
         except:
             raise CommandError("No model %s found in app %s" %
                                model_name.split('.'))
