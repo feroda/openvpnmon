@@ -35,7 +35,7 @@
 <li class="level1"><div class="li"> Run as administrator the downloaded file and install the OpenVPN software</div>
 </li>
 {% endblocktrans %}
-<li class="level1"><div class="li"> <a href="{{ CERTS_PUBLIC_DOWNLOAD_URL_BASE }}{% url 'base.views.cert_download' token=client.cert_distribution_token client_id=client.id %}">{% trans "Download certificate and configuration files" %}</a></li>
+<li class="level1"><div class="li"> <a href="{{ CERTS_PUBLIC_DOWNLOAD_URL_BASE }}{% url 'cert-download' token=client.cert_distribution_token client_id=client.id %}">{% trans "Download certificate and configuration files" %}</a></li>
 {% blocktrans %}
 <li class="level1"><div class="li"> Extract <strong>configuration files</strong> in the OpenVPN configuration folder</div>
 <ul>

@@ -29,7 +29,7 @@
     </p>
     <ul>
         <li>token: {{ client.cert_distribution_token }}</li>
-        <li>url: <a href="{{ CERTS_PUBLIC_DOWNLOAD_URL_BASE }}{% url 'base.views.pre_cert_download' token=client.cert_distribution_token client_id=client.id %}">{% url 'base.views.pre_cert_download' token=client.cert_distribution_token client_id=client.id %}</a></li>
+        <li>url: <a href="{{ CERTS_PUBLIC_DOWNLOAD_URL_BASE }}{% url 'pre-cert-download' token=client.cert_distribution_token client_id=client.id %}">{% url 'pre-cert-download' token=client.cert_distribution_token client_id=client.id %}</a></li>
     </ul>
     </p>
 {% endfor %}

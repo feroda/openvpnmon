@@ -5,7 +5,7 @@ from django.http import HttpResponseBadRequest, HttpResponse, Http404
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.admin.views.decorators import staff_member_required
 
-from django.shortcuts import render_to_response, get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.template import RequestContext
 from django.conf import settings
 
@@ -33,8 +33,7 @@ def display_certs(request):
     for client in qs:
         if not client.cert:
             client.create_cert()
-    return render_to_response("display_certs.html", {"objs": qs},
-                              context_instance=RequestContext(request))
+    return render(request, "display_certs.html", {"objs": qs})
 
 
 @staff_member_required
@@ -53,10 +52,8 @@ def display_distributions(request):
     for obj in qs:
         obj.distribute_cert()
 
-    return render_to_response("display_distributions.html",
-                              {"objs": qs,
-                               "URL_PREFIX": settings.URL_PREFIX},
-                              context_instance=RequestContext(request))
+    return render(request, "display_distributions.html",
+                  {"objs": qs, "URL_PREFIX": settings.URL_PREFIX})
 
 
 def pre_cert_download(request, client_id, token):
@@ -68,8 +65,7 @@ def pre_cert_download(request, client_id, token):
     if not rv:
         raise Http404
 
-    return render_to_response("display_download_page.html", {"client": client},
-                              context_instance=RequestContext(request))
+    return render(request, "display_download_page.html", {"client": client})
 
 
 def _prepare_zip_certs_response(request, client):
@@ -182,4 +178,4 @@ def tcp_connect(request, client_id):
         'tcp_connection_up': tcp_connection_up,
         'hostname': hostname,
     }
-    return render_to_response("network_test.html", context)
+    return render(request, "network_test.html", context)
