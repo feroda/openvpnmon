@@ -6,7 +6,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.admin.views.decorators import staff_member_required
 
 from django.shortcuts import get_object_or_404, redirect, render
-from django.template import RequestContext
 from django.conf import settings
 
 from base.models import Client, ACTION_CERT_DOWNLOADED, ClientActionsLog
