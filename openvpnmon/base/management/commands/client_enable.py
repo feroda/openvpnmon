@@ -18,10 +18,14 @@ class Command(BaseCommand):
     args = "<client cert common name>"
     help = 'Enable a client to access VPN. It must be invoked by root'
 
+    def add_arguments(self, parser):
+        parser.add_argument('CN')
+
+
     def handle(self, *args, **options):
 
         try:
-            common_name = args[0]
+            common_name = options['CN']
         except:
             raise CommandError("Usage client_enable %s" % (self.args))
 
