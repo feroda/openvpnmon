@@ -56,9 +56,12 @@ class Command(BaseCommand):
             error_log = "%s | return code %s | %s" % (e.shell_cmd,
                                                       e.returncode, e.output)
             log.debug(error_log)
-            client_log = ClientActionsLog(action=ACTION_ERROR_CLIENT_ENABLE,
-                                          note=error_log)
-            client.clientactionslog_set.add(client_log)
+            client.save()
+            log_entry = ClientActionsLog(client=client,
+                                         action=ACTION_ERROR_CLIENT_ENABLE,
+                                         note=error_log)
+
+            log_entry.save()
             raise CommandError(e.output)
 
         log.info("ENABLING -> CLIENT AUTH")

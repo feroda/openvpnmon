@@ -108,8 +108,9 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 # Logging facility
-LOG_FILE = os.path.join(BASE_DIR, 'openvpnmon.log')
-LOG_FILE_DEBUG = os.path.join(BASE_DIR, 'openvpnmon_debug.log')
+LOG_PATH = os.environ.get('LOG_PATH', BASE_DIR)
+LOG_FILE = os.path.join(LOG_PATH, 'openvpnmon.log')
+LOG_FILE_DEBUG = os.path.join(LOG_PATH, 'openvpnmon_debug.log')
 
 LOGGING = {
     'version': 1,
