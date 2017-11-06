@@ -13,5 +13,5 @@ HARDENING = True
 
 CERTS_PUBLIC_DOWNLOAD_URL_BASE = "https://localhost"
 VPN_HOME_PAGE = "http://wwwvpnserver"
-HOOK_CLIENT_MANAGE = BASE_DIR + "/extras/client-manage.sh"
+HOOK_CLIENT_MANAGE = os.path.join(BASE_DIR, "..", "extras", "client-manage.sh")
 DEFAULT_DOMAIN = "demo.it"
